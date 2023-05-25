@@ -30,6 +30,7 @@ async def plan_interval(ctx: Context):
     plan = lamp.storage.all_desire()
     lamp.update_intention(ctx, plan)
     lamp.execute_intention(ctx)
+    
 
 @lamp.on_message(model=Message)
 async def message_handler(ctx: Context, sender: str, msg: Message):
