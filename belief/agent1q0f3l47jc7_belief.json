@@ -1,3 +1,7 @@
 {
-    "initial_status": "01/04/2023"
+    "initial_status": "01/04/2023",
+    "horario_passado": 19,
+    "local": "quarto",
+    "temperatura_diferente": 24,
+    "lampada": "ON"
 }

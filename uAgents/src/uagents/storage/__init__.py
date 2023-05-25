@@ -10,7 +10,10 @@ import pandas as pd
 class KeyValueStore:
     def __init__(self, name: str, cwd: str = None):
         self._data = {}
+        self._data_plan = {}
         self._data_belief = {}
+        self._data_desire = []
+        self._data_intention = []
         self._name = name or "my"
 
         cwd = cwd or os.getcwd()
@@ -21,13 +24,6 @@ class KeyValueStore:
 
     def get(self, key: str) -> Optional[Any]:
         return self._data.get(key)
-    
-    def get_belief(self, key: str) -> Optional[Any]:
-        belief_data = self._load_belief()
-        return belief_data.get(key)
-    
-    def all_belief(self) -> Optional[Any]:
-        return self._load_belief()
 
     def has(self, key: str) -> bool:
         return key in self._data
@@ -49,6 +45,11 @@ class KeyValueStore:
         with open(self._path, "r", encoding="utf-8") as file:
             self._data = json.load(file)
 
+    def _save(self):
+        with open(self._path, "w", encoding="utf-8") as file:
+            json.dump(self._data, file, ensure_ascii=False, indent=4)
+            
+    ############################################## BELIEF ######################################################
     def _load_belief(self):
         belief_dir = os.path.join(os.getcwd(), "belief")
         belief_file_path = os.path.join(belief_dir, f"{self._name}_belief.json")
@@ -57,11 +58,7 @@ class KeyValueStore:
             with open(belief_file_path, "r", encoding="utf-8") as file:
                 return json.load(file)
         return None
-
-    def _save(self):
-        with open(self._path, "w", encoding="utf-8") as file:
-            json.dump(self._data, file, ensure_ascii=False, indent=4)
-            
+    
     def set_belief(self, key: str, value: Any):
         self._data_belief[key] = value
         self._save_belief()
@@ -74,8 +71,120 @@ class KeyValueStore:
         belief_file_path = os.path.join(belief_dir, f"{self._name}_belief.json")
         
         with open(belief_file_path, "w", encoding="utf-8") as file:
-            json.dump(self._data_belief, file, ensure_ascii=False, indent=4)
+            json.dump(self._data_belief, file, ensure_ascii=False, indent=4)   
             
+    def get_belief(self, key: str) -> Optional[Any]:
+        belief_data = self._load_belief()
+        return belief_data.get(key)
+    
+    def all_belief(self) -> Optional[Any]:
+        return self._load_belief()
+    
+    
+    ############################################## DESIRE ######################################################
+    
+    def _load_desire(self):
+        desire_dir = os.path.join(os.getcwd(), "desire")
+        desire_file_path = os.path.join(desire_dir, f"{self._name}_desire.json")
+
+        if os.path.isfile(desire_file_path):
+            with open(desire_file_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        return None
+    
+    def set_desire(self, key: str):
+        self._data_desire.append(key)
+        self._save_desire()
+    
+    def _save_desire(self):
+        desire_dir = os.path.join(os.getcwd(), "desire")
+        
+        os.makedirs(desire_dir, exist_ok=True)
+        
+        desire_file_path = os.path.join(desire_dir, f"{self._name}_desire.json")
+        
+        with open(desire_file_path, "w", encoding="utf-8") as file:
+            json.dump(self._data_desire, file, ensure_ascii=False, indent=4)   
+            
+    def get_desire(self, key: str) -> Optional[Any]: #atenção ao key
+        desire_data = self._load_desire()
+        return desire_data.pop()
+    
+    def all_desire(self) -> Optional[Any]:
+        return self._load_desire()
+    
+    
+    ############################################## INTENTION ######################################################
+    def _load_intention(self):
+        intention_dir = os.path.join(os.getcwd(), "intention")
+        intention_file_path = os.path.join(intention_dir, f"{self._name}_intention.json")
+
+        if os.path.isfile(intention_file_path):
+            with open(intention_file_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        return None
+    
+    def set_intention(self, key: str):
+        self._data_intention.extend(key)
+        self._save_intention()
+    
+    def _save_intention(self):
+        intention_dir = os.path.join(os.getcwd(), "intention")
+        
+        os.makedirs(intention_dir, exist_ok=True)
+        
+        intention_file_path = os.path.join(intention_dir, f"{self._name}_intention.json")
+        
+        with open(intention_file_path, "w", encoding="utf-8") as file:
+            json.dump(self._data_intention, file, ensure_ascii=False, indent=4)   
+            
+    def get_intention(self, key: str) -> Optional[Any]:
+        intention_data = self._load_intention()
+        return intention_data.get(key)
+    
+    def all_intention(self) -> Optional[Any]:
+        return self._load_intention()
+    
+    
+    ############################################## PLAN ######################################################
+    def _load_plan(self):
+        plan_dir = os.path.join(os.getcwd(), "plan")
+        plan_file_path = os.path.join(plan_dir, f"{self._name}_plan.json")
+
+        if os.path.isfile(plan_file_path):
+            with open(plan_file_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        return None
+    
+    def set_plan(self, goal, scenario, plan):
+        self._data_plan[goal] = { 'context': scenario, 'plan': [plan]}
+        self._save_plan()
+    
+    def _save_plan(self):
+        plan_dir = os.path.join(os.getcwd(), "plan")
+        
+        os.makedirs(plan_dir, exist_ok=True)
+        
+        plan_file_path = os.path.join(plan_dir, f"{self._name}_plan.json")
+        
+        with open(plan_file_path, "w", encoding="utf-8") as file:
+            json.dump(self._data_plan, file, ensure_ascii=False, indent=4) 
+            
+    def add_plan(self, goal, prec, plan):
+        # cria um dicionário indexado por goal, explicitando contexto (pré-condição) e o plano (sequencia de ações ou sub-objetivos)
+        self._data_plan[goal] = {'context': prec, 'plan': plan}   
+            
+    def get_plan(self, goal, bb) -> Optional[Any]:
+        # se o objetivo possui planos para alcançalo
+        if goal in list(self._data_plan):
+            # verifico se as pré condições são satisfeitas (estão na Belief Base)
+            if(set(self._data_plan[goal]['context'].items()).issubset(bb.items())):
+                # retorno o plano para atingir aquele objetivo
+                return self._data_plan[goal]['plan']
+        return None
+    
+    def all_plan(self) -> Optional[Any]:
+        return self._load_plan()
 
 def load_all_keys() -> dict:
     private_keys_path = os.path.join(os.getcwd(), "private_keys.json")

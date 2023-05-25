@@ -1,0 +1,34 @@
+{
+    "regular_iluminacao": {
+        "context": {
+            "lampada": "ON"
+        },
+        "plan": [
+            [
+                "desligar"
+            ]
+        ]
+    },
+    "regular_temperatura": {
+        "context": {
+            "temperatura_diferente": 24
+        },
+        "plan": [
+            [
+                "ajustar_temperatura"
+            ]
+        ]
+    },
+    "regular_ambiente": {
+        "context": {
+            "horario_passado": 19,
+            "local": "quarto"
+        },
+        "plan": [
+            [
+                "regular_temperatura",
+                "regular_iluminacao"
+            ]
+        ]
+    }
+}

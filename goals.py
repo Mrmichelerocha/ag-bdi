@@ -1,4 +1,4 @@
-from environment import Environment_agent_lamp, Environment_agent_sleep
+from uagents.environment import Environment_agent_lamp, Environment_agent_sleep
 
 ag_lamp = Environment_agent_lamp()
 ag_sleep = Environment_agent_sleep()

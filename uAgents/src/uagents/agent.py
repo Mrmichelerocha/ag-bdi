@@ -4,6 +4,7 @@ import json
 import os
 import pandas as pd
 from typing import Dict, List, Optional, Set, Union, Type, Tuple, Any
+from uagents.environment import Environment
 
 from cosmpy.aerial.wallet import LocalWallet, PrivateKey
 from cosmpy.crypto.address import Address
@@ -67,6 +68,7 @@ class Agent(Sink):
         self._background_tasks: Set[asyncio.Task] = set()
         self._resolver = resolve if resolve is not None else AlmanacResolver()
         self._loop = asyncio.get_event_loop_policy().get_event_loop()
+        self._environment = Environment()
 
         # initialize wallet and identity
         if seed is None:
@@ -426,10 +428,52 @@ class Agent(Sink):
 
             if handler is not None:
                 await handler(context, sender, recovered)
+                
+    ############################################## CODIFICA ######################################################            
+    # outras coisas interessantes, com beliefs update, add desires, etc.. 
 
     def belief(self, ctx: Context, belief, value):
         ctx.storage.set_belief(belief, value) 
         
+    def desire(self, ctx: Context, desire):
+        ctx.storage.set_desire(desire) 
+
+    def set_plan_library(self, ctx: Context, goal, scenario, plan):
+        ctx.storage.set_plan(goal, scenario, plan)
+  
+    def get_plan_library(self, ctx: Context):
+        ctx.storage.get_plan
+
+    # Aqui poderiamos ter intentions (lista de intenções concorrentes), e cada uma delas ser uma intenção (esse código)
+    def update_intention(self, ctx: Context, goal):
+        # definir um plano para atingir o objetivo (pegar um dos planos da plan library)
+        plan = ctx.storage.get_plan(goal, ctx.storage.all_desire)
+        if plan:
+            # cria a intenção com aquele plano (mas pode ser algo mais elaborado, para manter o goal)
+            ctx.storage.set_intention(plan)
+
+    def execute_intention(self, ctx: Context):
+        # enquanto tem ações empilhadas na intenção
+        while ctx.storage.all_intention:
+            next = ctx.storage.all_intention.pop()
+            print(next)
+            # se for uma ação, executa ela (ou seja, não há entrada na plan library para 'next')
+            if ctx.storage.get_plan(next, ctx.storage.all_desire) is None:
+                next_action = self._environment.action()
+                action = getattr(next_action, next)
+                action()
+            # caso contrário, isso significa que é um objetivo, então olha na plan library o plano para atingir o objetivo e empilha a sequência de ações
+            else:
+                ctx.storage.all_intention.extend(ctx.storage.get_plan(next, ctx.storage.all_desire))
+                # self.intention.extend(self.plan_library.get_plan(next, self.beliefs))
+                    
+    @staticmethod
+    def contexto(ctx: Context, *args):
+        dicionario_context = {}
+        dicionario_belief = {}
+        dicionario_context = {item: arg[item] for arg in args for item in arg}        
+        dicionario_belief = ctx.storage.all_belief()
+        return all(chave in dicionario_belief and dicionario_belief[chave] == valor for chave, valor in dicionario_context.items())
 
 
 class Bureau:
