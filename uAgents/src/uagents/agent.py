@@ -5,6 +5,7 @@ import os
 import pandas as pd
 from typing import Dict, List, Optional, Set, Union, Type, Tuple, Any
 from uagents.environment import Environment
+from action import Action
 
 from cosmpy.aerial.wallet import LocalWallet, PrivateKey
 from cosmpy.crypto.address import Address
@@ -447,26 +448,25 @@ class Agent(Sink):
     # Aqui poderiamos ter intentions (lista de intenções concorrentes), e cada uma delas ser uma intenção (esse código)
     def update_intention(self, ctx: Context, goal):
         # definir um plano para atingir o objetivo (pegar um dos planos da plan library)
-        plan = ctx.storage.get_plan(goal, ctx.storage.all_desire)
+        plan = ctx.storage.get_plan(goal)
         if plan:
             # cria a intenção com aquele plano (mas pode ser algo mais elaborado, para manter o goal)
+            print("plan: ", plan)
             ctx.storage.set_intention(plan)
 
     def execute_intention(self, ctx: Context):
-        # enquanto tem ações empilhadas na intenção
-        while ctx.storage.all_intention:
-            next = ctx.storage.all_intention.pop()
-            print(next)
+        # enquanto tem açõe empilhadas na intenção
+        while ctx.storage.all_intention():
+            next = ctx.storage.all_intention().pop()
+            print("nest: ", next)
             # se for uma ação, executa ela (ou seja, não há entrada na plan library para 'next')
-            if ctx.storage.get_plan(next, ctx.storage.all_desire) is None:
-                next_action = self._environment.action()
+            if ctx.storage.get_plan(next) == None:
+                next_action = Action()
                 action = getattr(next_action, next)
                 action()
-            # caso contrário, isso significa que é um objetivo, então olha na plan library o plano para atingir o objetivo e empilha a sequência de ações
+            # caso contrário, isso significa que é um objetivo, então olha na plan library o plano para atingir o objetivo e empilha a sequencia de ações
             else:
-                ctx.storage.all_intention.extend(ctx.storage.get_plan(next, ctx.storage.all_desire))
-                # self.intention.extend(self.plan_library.get_plan(next, self.beliefs))
-                    
+                ctx.storage.all_intention().extend(ctx.storage.get_plan(next))                     
     @staticmethod
     def contexto(ctx: Context, *args):
         dicionario_context = {}

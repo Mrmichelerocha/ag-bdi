@@ -121,7 +121,8 @@ class KeyValueStore:
 
         if os.path.isfile(intention_file_path):
             with open(intention_file_path, "r", encoding="utf-8") as file:
-                return json.load(file)
+                data = json.load(file)
+                return data
         return None
     
     def set_intention(self, key: str):
@@ -157,7 +158,7 @@ class KeyValueStore:
         return None
     
     def set_plan(self, goal, scenario, plan):
-        self._data_plan[goal] = { 'context': scenario, 'plan': [plan]}
+        self._data_plan[goal] = { 'context': scenario, 'plan': plan}
         self._save_plan()
     
     def _save_plan(self):
@@ -172,16 +173,21 @@ class KeyValueStore:
             
     def add_plan(self, goal, prec, plan):
         # cria um dicionário indexado por goal, explicitando contexto (pré-condição) e o plano (sequencia de ações ou sub-objetivos)
-        self._data_plan[goal] = {'context': prec, 'plan': plan}   
+        self._data_plan[goal] = {'context': prec, 'plan': [plan]}   
             
-    def get_plan(self, goal, bb) -> Optional[Any]:
+    def get_plan(self, goal) -> Optional[Any]:
         # se o objetivo possui planos para alcançalo
-        if goal in list(self._data_plan):
-            # verifico se as pré condições são satisfeitas (estão na Belief Base)
-            if(set(self._data_plan[goal]['context'].items()).issubset(bb.items())):
-                # retorno o plano para atingir aquele objetivo
-                return self._data_plan[goal]['plan']
-        return None
+        for item in goal:
+            print("item: ", item)
+            if item in self._data_plan:  
+                print("data", item)              
+                print("context", self._data_plan[item]['context'])              
+                print("belief", self.all_belief())              
+                if(set(self._data_plan[item]['context']).issubset(self.all_belief())):
+                    print("plan action:", self._data_plan[item]['plan'])
+                    return self._data_plan[item]['plan']
+            else:
+                return None
     
     def all_plan(self) -> Optional[Any]:
         return self._load_plan()

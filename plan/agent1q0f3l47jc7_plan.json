@@ -4,9 +4,7 @@
             "lampada": "ON"
         },
         "plan": [
-            [
-                "desligar"
-            ]
+            "desligar"
         ]
     },
     "regular_temperatura": {
@@ -14,9 +12,7 @@
             "temperatura_diferente": 24
         },
         "plan": [
-            [
-                "ajustar_temperatura"
-            ]
+            "ajustar_temperatura"
         ]
     },
     "regular_ambiente": {
@@ -25,10 +21,8 @@
             "local": "quarto"
         },
         "plan": [
-            [
-                "regular_temperatura",
-                "regular_iluminacao"
-            ]
+            "regular_temperatura",
+            "regular_iluminacao"
         ]
     }
 }
