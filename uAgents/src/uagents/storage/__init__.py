@@ -147,7 +147,7 @@ class KeyValueStore:
     def all_intention(self) -> Optional[Any]:
         return self._load_intention()
     
-    def execute_intetion(self):
+    def execute_intetion(self, ctx):
          # enquanto tem açõe empilhadas na intenção
         while self._data_intention:
             next = self._data_intention.pop()
@@ -155,8 +155,11 @@ class KeyValueStore:
             # se for uma ação, executa ela (ou seja, não há entrada na plan library para 'next')
             if self.get_plan(next) == None:
                 next_action = Environment.action()
-                action = getattr(next_action, next)
-                action()
+                if hasattr(next_action, next):
+                    action = getattr(next_action, next)
+                    action(ctx)
+                else: 
+                    print("não posso fazer")
             # caso contrário, isso significa que é um objetivo, então olha na plan library o plano para atingir o objetivo e empilha a sequencia de ações
             else:
                  self._data_intention.extend(self.get_plan(next))

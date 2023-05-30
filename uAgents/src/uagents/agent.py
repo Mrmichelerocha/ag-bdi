@@ -454,7 +454,7 @@ class Agent(Sink):
             ctx.storage.set_intention(plan)
 
     def execute_intention(self, ctx: Context):
-        ctx.storage.execute_intetion()
+        ctx.storage.execute_intetion(ctx)
                                
     @staticmethod
     def contexto(ctx: Context, *args):
