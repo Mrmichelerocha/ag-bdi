@@ -8,7 +8,7 @@ class Message(Model):
     message: str
     
 lamp = Create_agent.lamp()
-goal = Action()
+action = Action()
 
 @lamp.on_event('startup')
 async def plan_event(ctx: Context):
@@ -18,19 +18,18 @@ async def plan_event(ctx: Context):
     lamp.belief(ctx, 'temperatura_diferente', 24)
     lamp.belief(ctx, 'lampada', 'ON')
     lamp.desire(ctx, 'regular_ambiente')
-    lamp.desire(ctx, 'regular_iluminacao')
+    # lamp.desire(ctx, 'regular_iluminacao')
     lamp.set_plan_library(ctx, 'regular_iluminacao', {'lampada': 'ON'}, ['desligar'])
     lamp.set_plan_library(ctx, 'regular_temperatura', {'temperatura_diferente': 24}, ['ajustar_temperatura'])
     lamp.set_plan_library(ctx, 'regular_ambiente', {'horario_passado': 19, 'local':'quarto'},['regular_temperatura','regular_iluminacao'])
     
 @lamp.on_interval(period=30.5)
 async def plan_interval(ctx: Context):
-    goal.ajustar_temperatura() if lamp.contexto(ctx, {"initial_status": "01/04/2023", "initial_": "01/04/2023"}) else False
-    goal.ajustar_temperatura() if lamp.contexto(ctx, {"initial_status": "01/04/2023"}) else False
+    action.ajustar_temperatura() if lamp.contexto(ctx, {"initial_status": "01/04/2023", "initial_": "01/04/2023"}) else False
+    action.ajustar_temperatura() if lamp.contexto(ctx, {"initial_status": "01/04/2023"}) else False
     
     # não gostei disso aqui!
-    plan = lamp.storage.all_desire()
-    print("plan lamp: ", plan)
+    plan = lamp.storage.get_desire()
     lamp.update_intention(ctx, plan)
     lamp.execute_intention(ctx)
 

@@ -451,22 +451,11 @@ class Agent(Sink):
         plan = ctx.storage.get_plan(goal)
         if plan:
             # cria a intenção com aquele plano (mas pode ser algo mais elaborado, para manter o goal)
-            print("plan: ", plan)
             ctx.storage.set_intention(plan)
 
     def execute_intention(self, ctx: Context):
-        # enquanto tem açõe empilhadas na intenção
-        while ctx.storage.all_intention():
-            next = ctx.storage.all_intention().pop()
-            print("nest: ", next)
-            # se for uma ação, executa ela (ou seja, não há entrada na plan library para 'next')
-            if ctx.storage.get_plan(next) == None:
-                next_action = Action()
-                action = getattr(next_action, next)
-                action()
-            # caso contrário, isso significa que é um objetivo, então olha na plan library o plano para atingir o objetivo e empilha a sequencia de ações
-            else:
-                ctx.storage.all_intention().extend(ctx.storage.get_plan(next))                     
+        ctx.storage.execute_intetion()
+                               
     @staticmethod
     def contexto(ctx: Context, *args):
         dicionario_context = {}

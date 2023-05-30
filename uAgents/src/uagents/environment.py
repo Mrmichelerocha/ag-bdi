@@ -1,6 +1,6 @@
 from action import Action
 
-class Environment:
+class Environment():
 
     def action():
         return Action()

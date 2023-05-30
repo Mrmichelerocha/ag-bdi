@@ -5,6 +5,7 @@ from typing import Tuple
 from cosmpy.aerial.wallet import PrivateKey
 from uagents.crypto import Identity
 import pandas as pd
+from uagents.environment import Environment
 
 
 class KeyValueStore:
@@ -106,7 +107,7 @@ class KeyValueStore:
         with open(desire_file_path, "w", encoding="utf-8") as file:
             json.dump(self._data_desire, file, ensure_ascii=False, indent=4)   
             
-    def get_desire(self, key: str) -> Optional[Any]: #atenção ao key
+    def get_desire(self) -> Optional[Any]: #atenção ao key
         desire_data = self._load_desire()
         return desire_data.pop()
     
@@ -146,6 +147,20 @@ class KeyValueStore:
     def all_intention(self) -> Optional[Any]:
         return self._load_intention()
     
+    def execute_intetion(self):
+         # enquanto tem açõe empilhadas na intenção
+        while self._data_intention:
+            next = self._data_intention.pop()
+            print(next)
+            # se for uma ação, executa ela (ou seja, não há entrada na plan library para 'next')
+            if self.get_plan(next) == None:
+                next_action = Environment.action()
+                action = getattr(next_action, next)
+                action()
+            # caso contrário, isso significa que é um objetivo, então olha na plan library o plano para atingir o objetivo e empilha a sequencia de ações
+            else:
+                 self._data_intention.extend(self.get_plan(next))
+    
     
     ############################################## PLAN ######################################################
     def _load_plan(self):
@@ -177,17 +192,12 @@ class KeyValueStore:
             
     def get_plan(self, goal) -> Optional[Any]:
         # se o objetivo possui planos para alcançalo
-        for item in goal:
-            print("item: ", item)
-            if item in self._data_plan:  
-                print("data", item)              
-                print("context", self._data_plan[item]['context'])              
-                print("belief", self.all_belief())              
-                if(set(self._data_plan[item]['context']).issubset(self.all_belief())):
-                    print("plan action:", self._data_plan[item]['plan'])
-                    return self._data_plan[item]['plan']
-            else:
-                return None
+        if goal in self._data_plan:
+            # verifico se as pré condições são satisfeitas (estão na Belief Base)
+            if(set(self._data_plan[goal]['context'].items()).issubset(self._data_belief.items())):
+                # retorno o plano para atingir aquele objetivo
+                return self._data_plan[goal]['plan']
+        return None
     
     def all_plan(self) -> Optional[Any]:
         return self._load_plan()
