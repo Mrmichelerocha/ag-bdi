@@ -1,4 +1,4 @@
-# Projeto de TCC: Multiagentes Baseados em Blockchain com Arquitetura BDI e PRS
+# Projeto de TCC: Multiagentes Baseados em Blockchain com Arquitetura BDI e PRS 
 
 Este repositório Git contém o projeto de Trabalho de Conclusão de Curso (TCC) que apresenta uma solução inovadora para o desenvolvimento de sistemas multiagentes baseados em blockchain. O projeto combina a arquitetura BDI (Belief-Desire-Intention) com a PRS (Procedural Reasoning System) para criar agentes inteligentes que operam de forma autônoma e segura em um ambiente distribuído. O objetivo principal é explorar os benefícios da tecnologia blockchain na coordenação e confiança entre os agentes, garantindo a integridade e a transparência das interações.
 
