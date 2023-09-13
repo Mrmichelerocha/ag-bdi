@@ -21,8 +21,8 @@
             "local": "quarto"
         },
         "plan": [
-            "regular_temperatura",
-            "regular_iluminacao"
+            "desligar",
+            "regular_temperatura"
         ]
     }
 }

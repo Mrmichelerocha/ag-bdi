@@ -176,7 +176,7 @@ class KeyValueStore:
         return None
     
     def set_plan(self, goal, scenario, plan):
-        self._data_plan[goal] = { 'context': scenario, 'plan': plan}
+        self._data_plan[goal] = {'context': scenario, 'plan': plan}
         self._save_plan()
     
     def _save_plan(self):
@@ -189,9 +189,9 @@ class KeyValueStore:
         with open(plan_file_path, "w", encoding="utf-8") as file:
             json.dump(self._data_plan, file, ensure_ascii=False, indent=4) 
             
-    def add_plan(self, goal, prec, plan):
-        # cria um dicionário indexado por goal, explicitando contexto (pré-condição) e o plano (sequencia de ações ou sub-objetivos)
-        self._data_plan[goal] = {'context': prec, 'plan': [plan]}   
+    # def add_plan(self, goal, prec, plan):
+    #     # cria um dicionário indexado por goal, explicitando contexto (pré-condição) e o plano (sequencia de ações ou sub-objetivos)
+    #     self._data_plan[goal] = {'context': prec, 'plan': [plan]}   
             
     def get_plan(self, goal) -> Optional[Any]:
         # se o objetivo possui planos para alcançalo

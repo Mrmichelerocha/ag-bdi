@@ -430,8 +430,7 @@ class Agent(Sink):
             if handler is not None:
                 await handler(context, sender, recovered)
                 
-    ############################################## CODIFICA ######################################################            
-    # outras coisas interessantes, com beliefs update, add desires, etc.. 
+    ############################################## CODIFICAÇÃO BDI+PRS ######################################################       
 
     def belief(self, ctx: Context, belief, value):
         ctx.storage.set_belief(belief, value) 
@@ -445,13 +444,12 @@ class Agent(Sink):
     def get_plan_library(self, ctx: Context):
         ctx.storage.get_plan
 
-    # Aqui poderiamos ter intentions (lista de intenções concorrentes), e cada uma delas ser uma intenção (esse código)
-    def update_intention(self, ctx: Context, goal):
-        # definir um plano para atingir o objetivo (pegar um dos planos da plan library)
+    def update_intention(self, ctx: Context):
+        goal = ctx.storage.get_desire()
         plan = ctx.storage.get_plan(goal)
         if plan:
-            # cria a intenção com aquele plano (mas pode ser algo mais elaborado, para manter o goal)
             ctx.storage.set_intention(plan)
+            self.execute_intention(ctx)
 
     def execute_intention(self, ctx: Context):
         ctx.storage.execute_intetion(ctx)
