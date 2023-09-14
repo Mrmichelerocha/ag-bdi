@@ -1,39 +1,34 @@
 from uagents import Agent, Context, Model
 from aumanaque import Create_agent
 from action import Action
-# from goals import Goals
-# from intentions import objetivo
 
 class Message(Model):
     message: str
     
-lamp = Create_agent.lamp()
+agent1 = Create_agent.agent1()
 action = Action()
   
-@lamp.on_event('startup')
+@agent1.on_event('startup')
 async def plan_event(ctx: Context):
-    lamp.belief(ctx, 'initial_status', '01/04/2023')
-    lamp.belief(ctx, 'horario_passado', 19)
-    lamp.belief(ctx, 'local', 'quarto')
-    lamp.belief(ctx, 'temperatura_diferente', 24)
-    lamp.belief(ctx, 'lampada', 'ON')
-    lamp.desire(ctx, 'regular_ambiente')
-    # lamp.desire(ctx, 'regular_iluminacao')
-    lamp.set_plan_library(ctx, 'regular_iluminacao', {'lampada': 'ON'}, ['desligar'])
-    lamp.set_plan_library(ctx, 'regular_temperatura', {'temperatura_diferente': 24}, ['ajustar_temperatura'])
-    lamp.set_plan_library(ctx, 'regular_ambiente', {'horario_passado': 19, 'local':'quarto'},['desligar','regular_temperatura'])
+    agent1.belief(ctx, 'initial_status', '01/04/2023')
+    agent1.belief(ctx, 'horario_passado', 19)
+    agent1.belief(ctx, 'local', 'quarto')
+    agent1.belief(ctx, 'temperatura_diferente', 24)
+    agent1.set_plan_library(ctx, 'regular_iluminacao', {'local': 'quarto'}, ['desligar'])
+    agent1.set_plan_library(ctx, 'regular_temperatura', {'temperatura_diferente': 24}, ['ajustar_temperatura'])
+    agent1.set_plan_library(ctx, 'regular_ambiente', {'horario_passado': 19, 'local':'quarto'}, ['regular_iluminacao','regular_temperatura'])
+    agent1.desire(ctx, 'regular_ambiente')
     
-@lamp.on_interval(period=30.5)
+@agent1.on_interval(period=30.5)
 async def plan_interval(ctx: Context):
-    # action.ajustar_temperatura(ctx) if lamp.contexto(ctx, {"initial_status": "01/04/2023", "initial_": "01/04/2023"}) else False
-    # action.ajustar_temperatura(ctx) if lamp.contexto(ctx, {"initial_status": "01/04/2023"}) else False
-    lamp.update_intention(ctx)
-    # action.ajustar(ctx) if lamp.contexto(ctx, {"initial_status": "01/04/2023"}) else False
+    agent1.update_intention(ctx)
+    action.ajustar(ctx) if agent1.contexto(ctx, {"initial_status": "01/04/2023"}) else False
+    await ctx.send(Create_agent.AGENTE1_ADDRESS, Message(message="Hello there Agent2."))
 
-@lamp.on_message(model=Message)
+@agent1.on_message(model=Message)
 async def message_handler(ctx: Context, sender: str, msg: Message):
     ctx.logger.info(f"Received message from {sender}: {msg.message}")
-    await ctx.send(sender, Message(message="Hello there alice."))
+    await ctx.send(sender, Message(message="Hello there agent."))
     
 if __name__ == "__main__":
-    lamp.run()
+    agent1.run()

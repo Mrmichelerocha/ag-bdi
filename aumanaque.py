@@ -4,37 +4,37 @@ from uagents.resolver import RulesBasedResolver
 
 class Create_agent():  
 
-    LAMP_ADDRESS = "agent1q0f3l47jc7nwp6u6tem9g9nwpd2qnl7a379aznwntpeqxxr5hks3zxazuse"
-    SLEEP_ADDRESS = "agent1qws0tpmufe40gw6j02unxflftzl8uy56045kku5z9huafhyef3fy7v0h7mt"
+    AGENTE1_ADDRESS = "agent1q0f3l47jc7nwp6u6tem9g9nwpd2qnl7a379aznwntpeqxxr5hks3zxazuse"
+    AGENTE2_ADDRESS = "agent1qws0tpmufe40gw6j02unxflftzl8uy56045kku5z9huafhyef3fy7v0h7mt"
     
     resolve=RulesBasedResolver(
         {
-            LAMP_ADDRESS: "http://127.0.0.1:8020/submit",
-            SLEEP_ADDRESS: "http://127.0.0.1:8021/submit",
+            AGENTE1_ADDRESS: "http://127.0.0.1:8020/submit",
+            AGENTE2_ADDRESS: "http://127.0.0.1:8021/submit",
         }
     )
     
-    def lamp():   
-        lamp = Agent(
-            name="lamp",
+    def agent1():   
+        agent1 = Agent(
+            name="agent1",
             port=8020,
-            seed="lamp secret phrase",
+            seed="agent1 secret phrase",
             resolve= Create_agent.resolve,
         )
         
-        fund_agent_if_low(lamp.wallet.address())
+        fund_agent_if_low(agent1.wallet.address())
         
-        return lamp
+        return agent1
         
-    def sleep():
-        sleep = Agent(
-            name="sleep",
+    def agent2():
+        agent2 = Agent(
+            name="agent2",
             port=8021,
-            seed="sleep secret phrase",
+            seed="agent2 secret phrase",
             resolve= Create_agent.resolve,
         )
         
-        fund_agent_if_low(sleep.wallet.address())
+        fund_agent_if_low(agent2.wallet.address())
         
-        return sleep
+        return agent2
     

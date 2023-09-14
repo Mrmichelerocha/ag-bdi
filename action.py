@@ -3,7 +3,6 @@
 
 class Action:
     def ajustar_temperatura(self, ctx):
-        ctx.storage.set_belief("aiai", "ai")
         print("###> temperatura ajustada <### ")
         
     def ajustar(self, ctx):
@@ -11,5 +10,5 @@ class Action:
         print("###> temperatura ajustada <### ")
 
     def desligar(self, ctx):
-        # ctx.storage.set_belief("temperatura_diferente", 18)
+        ctx.storage.set_belief("temperatura_diferente", 18)
         print("###> desligado <### ")
